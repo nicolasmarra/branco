@@ -32,10 +32,12 @@ def get_paris(commande):
     paris_items = None 
 
     if commande == "/paris":
-        paris_items = soup.find_all(class_=["cardEvent ng-star-inserted", "cardEvent is-superLive ng-star-inserted"])
+        paris_items = soup.find_all(class_=["cardEvent ng-star-inserted","cardEvent is-superLive ng-star-inserted"])
     elif commande == "/paris-live":
         paris_items = soup.find_all(class_="cardEvent is-live ng-star-inserted")
     
+    print(len(paris_items))
+
     paris = []
 
     for pari_item in paris_items:
