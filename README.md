@@ -20,20 +20,20 @@ Branco est un bot Discord conçu pour fournir des informations sur les paris spo
    python3 branco.py
    ```
 
-## Utilisation
+## Commandes
 
-- Utilisez la commande `/paris` pour afficher les prochains matchs avec leurs cotes.
-- Utilisez la commande `/paris-live` pour afficher les cotes des matchs en direct.
-- Utilisez la commande `/delete` pour supprimer les messages dans le canal (accessible uniquement par l'utilisateur "nicolasmarra" ou les administrateurs du serveur).
+- `/paris` : affiche les prochains matchs avec leurs cotes.
+- `/paris-live` : affiche les cotes des matchs en direct.
+- `/delete` : supprime les messages dans le canal (accessible uniquement par l'utilisateur "nicolasmarra" ou les administrateurs du serveur).
 
 **Note :** Assurez-vous que le bot a les autorisations nécessaires pour lire et envoyer des messages dans le canal spécifié.
 
 ## TODO
 
-[x] Afficher les informations sur le match du jour, le match de demain, et les matchs en direct.
-[x]  Afficher les inforlations des matchs d'un championnat spécifique.
-[]  Afficher les classements des équipes avec des détails tels que le face à face, les derniers matchs des équipes, les stats sur les buts encaissés et marqués, et la composition probable.
-[]  Afficher les pronostics d'un certain match, le pronostic complet avec tous les détails du match, et le pronostic simplifié.
+- [x] Afficher les informations sur les matchs du jour et les matchs en live.
+- [ ] Afficher les inforlations des matchs d'un championnat spécifique.
+- [ ] Afficher les classements des équipes avec des détails tels que le face à face, les derniers matchs des équipes, les stats sur les buts encaissés et marqués, et la composition probable.
+- [ ] Afficher les pronostics d'un certain match, le pronostic complet avec tous les détails du match, et le pronostic simplifié.
 
 ## Auteur
 
