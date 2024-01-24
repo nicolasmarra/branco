@@ -31,7 +31,7 @@ Branco est un bot Discord conçu pour fournir des informations sur les paris spo
 ## TODO
 
 - [x] Afficher les informations sur les matchs du jour et les matchs en live.
-- [ ] Afficher les inforlations des matchs d'un championnat spécifique.
+- [x] Afficher les inforlations des matchs d'un championnat spécifique.
 - [ ] Afficher les classements des équipes avec des détails tels que le face à face, les derniers matchs des équipes, les stats sur les buts encaissés et marqués, et la composition probable.
 - [ ] Afficher les pronostics d'un certain match, le pronostic complet avec tous les détails du match, et le pronostic simplifié.
 
