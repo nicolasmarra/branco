@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import requests
 from bs4 import BeautifulSoup
+import json
 
 # chargement des variables d'environnement
 load_dotenv()
@@ -21,10 +22,15 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 
-def get_paris(commande):
-    url = "https://www.betclic.fr/football-s1"
+def get_url(commande):
+    with open("commandes_urls.json", "r") as fichier_json:
+        commande_url = json.load(fichier_json)
 
 
+    return commande_url.get(commande, None)    
+
+def get_paris(commande, url):
+    
     response = requests.get(url)
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -77,9 +83,9 @@ def get_paris(commande):
     return paris
 
 
-def afficher_paris(commande):
+def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
     embed_paris_list = []
-    for pari_info in get_paris(commande):
+    for pari_info in get_paris(commande, url):
         equipe_domicile = pari_info.get("equipe_domicile")
         equipe_exterieur = pari_info.get("equipe_exterieur")
         cote_domicile = pari_info.get("cote_domicile")
@@ -117,13 +123,30 @@ async def on_ready():
 @client.event
 async def on_message(message):
     commande = message.content
+    commande_divisee = commande.split(" ")
     if message.channel.id == PARIS_CHANNEL_ID and (commande == "/paris" or commande == "/paris-live"):
 
         embed_paris = afficher_paris(commande)
         for embed_pari in embed_paris:
             await message.channel.send(embed=embed_pari)
 
+    elif message.channel.id == PARIS_CHANNEL_ID and commande_divisee[0] =="/paris":
+        if len(commande_divisee) == 3 and commande_divisee[1] == "-c":
 
+            url = get_url(commande_divisee[2])
+            if url is None:
+                await message.channel.send("Ce championnat n'existe pas")
+            else:   
+                embed_paris = afficher_paris(commande_divisee[0], url)
+                for embed_pari in embed_paris:
+                    await message.channel.send(embed=embed_pari)
+
+
+    elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/help":
+        embed_help = discord.Embed(title="**Liste des commandes**", color=0xff0000)
+        embed_help.add_field(name="**/paris**", value="Affiche les paris du jour")
+        embed_help.add_field(name="**/paris-live**", value="Affiche les paris en live")
+        await message.channel.send(embed=embed_help)
 
     if message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
         await message.channel.purge()
