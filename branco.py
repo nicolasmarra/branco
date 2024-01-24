@@ -66,6 +66,12 @@ def get_paris(commande):
         evenement_heure = pari_item.find("div", class_="event_infoTime ng-star-inserted")
         pari_info["evenement_heure"] = evenement_heure.get_text(strip=True)
         
+        if commande == "/paris-live":
+            score_equipe_domicile = pari_item.find("span", class_="scoreboard_score scoreboard_score-1 ng-star-inserted").get_text(strip=True)
+            score_equipe_exterieur = pari_item.find("span", class_="scoreboard_score scoreboard_score-2 ng-star-inserted").get_text(strip=True)
+            pari_info["score_equipe_domicile"] = score_equipe_domicile
+            pari_info["score_equipe_exterieur"] = score_equipe_exterieur
+
         paris.append(pari_info)
 
     return paris
@@ -74,13 +80,17 @@ def get_paris(commande):
 def afficher_paris(commande):
     embed_paris_list = []
     for pari_info in get_paris(commande):
-        equipe_domicile = pari_info.get("equipe_domicile", "N/A")
-        equipe_exterieur = pari_info.get("equipe_exterieur", "N/A")
-        cote_domicile = pari_info.get("cote_domicile", "N/A")
-        cote_match_nul = pari_info.get("cote_match_nul", "N/A")
-        cote_exterieur = pari_info.get("cote_exterieur", "N/A")
-        type_evenement = pari_info.get("type_evenement", "N/A")
-        evenement_heure = pari_info.get("evenement_heure", "N/A")
+        equipe_domicile = pari_info.get("equipe_domicile")
+        equipe_exterieur = pari_info.get("equipe_exterieur")
+        cote_domicile = pari_info.get("cote_domicile")
+        cote_match_nul = pari_info.get("cote_match_nul")
+        cote_exterieur = pari_info.get("cote_exterieur")
+        type_evenement = pari_info.get("type_evenement")
+        evenement_heure = pari_info.get("evenement_heure")
+
+        if commande == "/paris-live":
+            score_equipe_domicile = pari_info.get("score_equipe_domicile")
+            score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
 
         message_paris = (
             f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Match Nul : {cote_match_nul}\n"
@@ -89,7 +99,11 @@ def afficher_paris(commande):
 
         embed_paris = discord.Embed(title=f"**{type_evenement} - {evenement_heure}**\n", color=0xff0000)
         
-        embed_paris.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=message_paris)
+        if commande == "/paris":
+            embed_paris.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=message_paris)
+        elif commande == "/paris-live":
+            embed_paris.add_field(name=f"**{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**", value=message_paris)
+
         embed_paris_list.append(embed_paris)
     
     return embed_paris_list
