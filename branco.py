@@ -22,12 +22,12 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 
-def get_url(commande):
-    with open("commandes_urls.json", "r") as fichier_json:
-        commande_url = json.load(fichier_json)
+def get_url(competition):
+    with open("competition_url.json", "r") as fichier_json:
+        competition_url = json.load(fichier_json)
 
 
-    return commande_url.get(commande, None)    
+    return competition_url.get(competition, None)    
 
 def get_paris(commande, url):
     
@@ -42,12 +42,16 @@ def get_paris(commande, url):
     elif commande == "/paris-live":
         paris_items = soup.find_all(class_="cardEvent is-live ng-star-inserted")
     
-    print(len(paris_items))
+    #print(len(paris_items))
 
     paris = []
 
     for pari_item in paris_items:
         pari_info = {}
+
+        evenement_lien = pari_item['href']
+        pari_info["evenement_lien"] = evenement_lien
+
 
         equipes_infos = pari_item.find_all(class_="scoreboard_contestantLabel")
         if len(equipes_infos) >= 2:
@@ -72,6 +76,7 @@ def get_paris(commande, url):
         evenement_heure = pari_item.find("div", class_="event_infoTime ng-star-inserted")
         pari_info["evenement_heure"] = evenement_heure.get_text(strip=True)
         
+
         if commande == "/paris-live":
             score_equipe_domicile = pari_item.find("span", class_="scoreboard_score scoreboard_score-1 ng-star-inserted").get_text(strip=True)
             score_equipe_exterieur = pari_item.find("span", class_="scoreboard_score scoreboard_score-2 ng-star-inserted").get_text(strip=True)
@@ -114,6 +119,52 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
     
     return embed_paris_list
 
+
+def get_paris_equipe(equipe,commande, url="https://www.betclic.fr/football-s1"):
+    for pari_info in get_paris(commande, url):
+        equipe_domicile = pari_info.get("equipe_domicile")
+        equipe_exterieur = pari_info.get("equipe_exterieur")
+        cote_domicile = pari_info.get("cote_domicile")
+        cote_match_nul = pari_info.get("cote_match_nul")
+        cote_exterieur = pari_info.get("cote_exterieur")
+        type_evenement = pari_info.get("type_evenement")
+        evenement_heure = pari_info.get("evenement_heure")
+        
+        if equipe_domicile == equipe or equipe_exterieur == equipe:
+
+            if commande == "/paris-live":
+                score_equipe_domicile = pari_info.get("score_equipe_domicile")
+                score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
+
+            message_paris = (
+                f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Match Nul : {cote_match_nul}\n"
+            )
+        
+
+            embed_paris = discord.Embed(title=f"**{type_evenement} - {evenement_heure}**\n", color=0xff0000)
+        
+            if commande == "/paris":
+                embed_paris.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=message_paris)
+            elif commande == "/paris-live":
+                embed_paris.add_field(name=f"**{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**", value=message_paris)
+
+            return embed_paris
+    
+def get_lien_match(commande, url,equipe):
+    for pari_info in get_paris(commande, url):
+        equipe_domicile = pari_info.get("equipe_domicile")
+        equipe_exterieur = pari_info.get("equipe_exterieur")
+        evenement_lien = pari_info.get("evenement_lien")
+
+        if(equipe_domicile == equipe or equipe_exterieur == equipe):
+            return evenement_lien
+
+    return None
+
+def afficher_paris_match(url):
+
+    return None
+
 # événement au démarrage du bot
 @client.event 
 async def on_ready():
@@ -140,6 +191,16 @@ async def on_message(message):
                 embed_paris = afficher_paris(commande_divisee[0], url)
                 for embed_pari in embed_paris:
                     await message.channel.send(embed=embed_pari)
+        
+        elif len(commande_divisee) == 3 and commande_divisee[1] == "-e":
+            equipe = commande_divisee[2]
+            embed_equipe = get_paris_equipe(equipe,commande_divisee[0])
+
+            if (embed_equipe is None):
+                await message.channel.send("Cette équipe ne joue pas aujourd'hui")
+            else: 
+                await message.channel.send(embed=embed_equipe)
+    
 
 
     elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/help":
