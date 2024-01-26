@@ -85,7 +85,7 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
             score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
 
         message_paris = (
-            f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Match Nul : {cote_match_nul}\n"
+            f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Nul : {cote_match_nul}\n"
             )
         
 
@@ -99,7 +99,6 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
         embed_paris_list.append(embed_paris)
     
     return embed_paris_list
-
 
 def get_paris_equipe(equipe,commande, url="https://www.betclic.fr/football-s1"):
     for pari_info in get_paris(commande, url):
@@ -120,7 +119,7 @@ def get_paris_equipe(equipe,commande, url="https://www.betclic.fr/football-s1"):
                 score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
 
             message_paris = (
-                f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Match Nul : {cote_match_nul}\n"
+                f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Nul : {cote_match_nul}\n"
             )
         
 

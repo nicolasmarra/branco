@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 import re
 from paris import *
+from pronostics import get_pronostic, afficher_pronostic
 
 # chargement des variables d'environnement
 load_dotenv()
@@ -60,14 +61,21 @@ async def traiter_commandes(message):
             else:
                 print(lien_match)
 
+    elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/pronostic":
+        embed_pronostics = afficher_pronostic()
+        for embed_pronostic in embed_pronostics:
+            await message.channel.send(embed=embed_pronostic)
+
+    
     elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/help":
         embed_help = discord.Embed(title="**Liste des commandes**", color=0xff0000)
         embed_help.add_field(name="**/paris**", value="Affiche les paris du jour")
         embed_help.add_field(name="**/paris-live**", value="Affiche les paris en live")
         await message.channel.send(embed=embed_help)
-        
 
-    if message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
+            
+
+    elif message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
         await message.channel.purge()
         
 
