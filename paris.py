@@ -111,7 +111,9 @@ def get_paris_equipe(equipe,commande, url="https://www.betclic.fr/football-s1"):
         type_evenement = pari_info.get("type_evenement")
         evenement_heure = pari_info.get("evenement_heure")
         
-        if equipe_domicile == equipe or equipe_exterieur == equipe:
+        
+        equipe = str(equipe).lower()
+        if str(equipe_domicile).lower() == equipe or str(equipe_exterieur).lower() == equipe:
 
             if commande == "/paris-live":
                 score_equipe_domicile = pari_info.get("score_equipe_domicile")

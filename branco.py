@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import re
 from paris import *
 
 # chargement des variables d'environnement
@@ -30,7 +31,7 @@ async def traiter_commandes(message):
             await message.channel.send(embed=embed_pari)
 
     elif message.channel.id == PARIS_CHANNEL_ID and commande_divisee[0] =="/paris":
-        if len(commande_divisee) == 3 and commande_divisee[1] == "-c":
+        if len(commande_divisee) >= 3 and commande_divisee[1] == "-c":
 
             url = get_url(commande_divisee[2])
             if url is None:
@@ -40,8 +41,10 @@ async def traiter_commandes(message):
                 for embed_pari in embed_paris:
                     await message.channel.send(embed=embed_pari)
 
-        elif len(commande_divisee) == 3 and commande_divisee[1] == "-e":
-            equipe = commande_divisee[2]
+        elif len(commande_divisee) >= 3 and commande_divisee[1] == "-e":
+            equipe = commande[9:]
+            equipe = re.split(r'\s|-', equipe)
+            equipe = ' '.join(equipe)[1:]
             embed_equipe = get_paris_equipe(equipe,commande_divisee[0])
 
             if (embed_equipe is None):
