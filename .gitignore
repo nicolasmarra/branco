@@ -1,2 +1,3 @@
 # Fichiers d'environnement
 .env
+/__pycache__
