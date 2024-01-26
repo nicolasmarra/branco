@@ -25,6 +25,7 @@ async def envoyer_message(channel, message):
 async def traiter_commandes(message):
     commande = message.content
     commande_divisee = commande.split(" ")
+
     if message.channel.id == PARIS_CHANNEL_ID and (commande == "/paris" or commande == "/paris-live"):
 
         embed_paris = afficher_paris(commande)
@@ -61,12 +62,19 @@ async def traiter_commandes(message):
             else:
                 print(lien_match)
 
-    elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/pronostic":
+    elif message.channel.id == PARIS_CHANNEL_ID and (message.content == "/pronostic" or (len(commande_divisee) == 2 and commande_divisee[0] == "/pronostic" and commande_divisee[1] == "1")):
+        
         embed_pronostics = afficher_pronostic()
         for embed_pronostic in embed_pronostics:
-            await message.channel.send(embed=embed_pronostic)
-
+                await message.channel.send(embed=embed_pronostic)
     
+    elif message.channel.id == PARIS_CHANNEL_ID and len(commande_divisee) == 2 and commande_divisee[0] == "/pronostic" and commande_divisee[1] == "2":
+        
+        embed_pronostics = afficher_pronostic(commande_divisee[1])
+        for embed_pronostic in embed_pronostics:
+                await message.channel.send(embed=embed_pronostic)
+    
+
     elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/help":
         embed_help = discord.Embed(title="**Liste des commandes**", color=0xff0000)
         embed_help.add_field(name="**/paris**", value="Affiche les paris du jour")
