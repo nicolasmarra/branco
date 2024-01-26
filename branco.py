@@ -34,7 +34,7 @@ async def traiter_commandes(message):
 
             url = get_url(commande_divisee[2])
             if url is None:
-                envoyer_message(message.channel, "Ce championnat n'existe pas")
+                await envoyer_message(message.channel, "Ce championnat n'existe pas")
             else:   
                 embed_paris = afficher_paris(commande_divisee[0], url)
                 for embed_pari in embed_paris:
@@ -45,7 +45,7 @@ async def traiter_commandes(message):
             embed_equipe = get_paris_equipe(equipe,commande_divisee[0])
 
             if (embed_equipe is None):
-                envoyer_message(message.channel, "Cette équipe ne joue pas aujourd'hui")
+                await envoyer_message(message.channel, "Cette équipe ne joue pas aujourd'hui")
             else: 
                 await message.channel.send(embed=embed_equipe)
     
@@ -53,7 +53,7 @@ async def traiter_commandes(message):
             equipe = commande_divisee[2]
             lien_match = get_lien_match(equipe,commande_divisee[0])
             if (lien_match is None):
-                envoyer_message(message.channel, "Cette équipe ne joue pas aujourd'hui")
+                await envoyer_message(message.channel, "Cette équipe ne joue pas aujourd'hui")
             else:
                 print(lien_match)
 
