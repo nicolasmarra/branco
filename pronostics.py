@@ -129,3 +129,66 @@ def afficher_pronostic(site="1"):
         
     return embed_pronostics_list
 
+
+def get_pronostic_match(equipe, site="1"):
+
+    for pronostic_info in get_pronostic(site):
+        equipe_domicile = pronostic_info.get("equipe_domicile")
+        equipe_exterieur = pronostic_info.get("equipe_exterieur")
+        competition = pronostic_info.get("competition")
+        competition_pays = pronostic_info.get("competition_pays")
+        
+        if equipe != equipe_domicile and equipe != equipe_exterieur:
+            continue
+
+        if site == "2":
+            match_date = pronostic_info.get("match_date")
+            match_heure = pronostic_info.get("match_heure")
+        else: 
+            date_heure = pronostic_info.get("date_heure")
+
+        titre = pronostic_info.get("titre")
+        suggestion = pronostic_info.get("suggestion")
+        suggestion_cote = pronostic_info.get("suggestion_cote")
+        lien = pronostic_info.get("lien")
+
+        message_pronositc = (
+            f"**{titre}**:\n"
+            f"{suggestion} : {suggestion_cote}\n"
+        )
+
+        if site == "2":
+            embed_pronostic = discord.Embed(title=f"**{competition} - {competition_pays} : le {match_date} à {match_heure}**\n", color=0x0000ff)
+        else :
+                embed_pronostic = discord.Embed(title=f"**{competition} - {competition_pays} : {date_heure}**\n", color=0x0000ff)
+            
+        embed_pronostic.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=message_pronositc)
+
+        if site == "1":
+            lien = "https://www.sportytrader.com/pronostics/" + lien
+
+        response = requests.get(lien)
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Extraire la section contenant les informations sur le match
+        match_section = soup.find('section', class_='grid grid-cols-12')
+
+        print(match_section)
+
+        # Extraire la date et l'heure du match
+        #date_time = match_section.find('div', class_='px-box').find_all('p')[0].text.strip()
+        #print("Date et heure du match:", date_time)
+
+        # Extraire les noms des équipes
+        #equipes = match_section.find_all('span', class_='font-semibold')
+        #equipe1 = equipes[0].text.strip()
+        #equipe2 = equipes[1].text.strip()
+        #print("Équipe 1:", equipe1)
+        #print("Équipe 2:", equipe2)
+
+        # Extraire la description du match
+        #description = match_section.find('div', class_='prose').text.strip()
+        #print("Description du match:", description)
+
+get_pronostic_match("Estoril")

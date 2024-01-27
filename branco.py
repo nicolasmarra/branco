@@ -19,6 +19,7 @@ intents = discord.Intents.all()
 # création du client Discord
 client = discord.Client(intents=intents)
 
+
 async def envoyer_message(channel, message):
     await channel.send(message)
 
@@ -79,13 +80,20 @@ async def traiter_commandes(message):
         embed_help = discord.Embed(title="**Liste des commandes**", color=0xff0000)
         embed_help.add_field(name="**/paris**", value="Affiche les paris du jour")
         embed_help.add_field(name="**/paris-live**", value="Affiche les paris en live")
+        embed_help.add_field(name="**/paris -c <championnat>**", value="Affiche les paris du championnat")
+        embed_help.add_field(name="**/paris -e <équipe>**", value="Affiche les paris de l'équipe")
+        embed_help.add_field(name="**/pronostic**", value="Affiche les pronostics du jour")
+        embed_help.add_field(name="**/pronostic 1**", value="Affiche les pronostics du jour (sportytrader)")
+        embed_help.add_field(name="**/pronostic 2**", value="Affiche les pronostics du jour (rue des joueurs)")
+        embed_help.add_field(name="**/delete**", value="Supprime les messages du channel")
         await message.channel.send(embed=embed_help)
 
-            
 
     elif message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
         await message.channel.purge()
-        
+    
+    else: 
+        await message.channel.send("Commande inconnue : tapez /help pour afficher la liste des commandes")
 
 
 # événement au démarrage du bot
