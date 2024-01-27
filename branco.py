@@ -92,7 +92,7 @@ async def traiter_commandes(message):
     elif message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
         await message.channel.purge()
     
-    else: 
+    elif message.author != client.user: 
         await message.channel.send("Commande inconnue : tapez /help pour afficher la liste des commandes")
 
 
