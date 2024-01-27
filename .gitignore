@@ -1,3 +1,5 @@
 # Fichiers d'environnement
 .env
-./__pycache__
+
+# Fichiers de logs
+__pycache__
