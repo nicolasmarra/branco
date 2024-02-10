@@ -23,6 +23,7 @@ def get_paris(commande, url):
     elif commande == "/paris-live":
         paris_items = soup.find_all(class_="cardEvent is-live ng-star-inserted")
     
+    
     #print(len(paris_items))
 
     paris = []
@@ -80,6 +81,8 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
         type_evenement = pari_info.get("type_evenement")
         evenement_heure = pari_info.get("evenement_heure")
 
+
+
         if commande == "/paris-live":
             score_equipe_domicile = pari_info.get("score_equipe_domicile")
             score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
@@ -109,6 +112,7 @@ def get_paris_equipe(equipe,commande, url="https://www.betclic.fr/football-s1"):
         cote_exterieur = pari_info.get("cote_exterieur")
         type_evenement = pari_info.get("type_evenement")
         evenement_heure = pari_info.get("evenement_heure")
+        
         
         
         equipe = str(equipe).lower()

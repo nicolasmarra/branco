@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import re
 from paris import *
-from pronostics import get_pronostic, afficher_pronostic
+from pronostics import afficher_pronostic
 
 # chargement des variables d'environnement
 load_dotenv()
@@ -13,25 +13,40 @@ TOKEN = os.getenv('TOKEN')
 # récupération de l'id du channel général
 PARIS_CHANNEL_ID = int(os.getenv('PARIS_CHANNEL_ID'))
 
+
 # configuration des itents Discord
 intents = discord.Intents.all()
 
 # création du client Discord
 client = discord.Client(intents=intents)
 
+async def supprimer_message(channel):
+    await channel.purge()
 
 async def envoyer_message(channel, message):
     await channel.send(message)
+
+async def envoyer_paris_du_jour(commande="/paris"):
+    channel = client.get_channel(PARIS_CHANNEL_ID)
+    print(commande)
+    embed_paris = afficher_paris(commande)
+    print(embed_paris)
+    for embed_pari in embed_paris:
+        await channel.send(embed=embed_pari)
+
+async def envoyer_pronostics():
+    channel = client.get_channel(PARIS_CHANNEL_ID)
+    embed_pronostics = afficher_pronostic()
+    for embed_pronostic in embed_pronostics:
+        await channel.send(embed=embed_pronostic)
+
 
 async def traiter_commandes(message):
     commande = message.content
     commande_divisee = commande.split(" ")
 
     if message.channel.id == PARIS_CHANNEL_ID and (commande == "/paris" or commande == "/paris-live"):
-
-        embed_paris = afficher_paris(commande)
-        for embed_pari in embed_paris:
-            await message.channel.send(embed=embed_pari)
+        await envoyer_paris_du_jour(commande)
 
     elif message.channel.id == PARIS_CHANNEL_ID and commande_divisee[0] =="/paris":
         if len(commande_divisee) >= 3 and commande_divisee[1] == "-c":
@@ -65,9 +80,7 @@ async def traiter_commandes(message):
 
     elif message.channel.id == PARIS_CHANNEL_ID and (message.content == "/pronostic" or (len(commande_divisee) == 2 and commande_divisee[0] == "/pronostic" and commande_divisee[1] == "1")):
         
-        embed_pronostics = afficher_pronostic()
-        for embed_pronostic in embed_pronostics:
-                await message.channel.send(embed=embed_pronostic)
+        await envoyer_pronostics()
     
     elif message.channel.id == PARIS_CHANNEL_ID and len(commande_divisee) == 2 and commande_divisee[0] == "/pronostic" and commande_divisee[1] == "2":
         
@@ -90,7 +103,7 @@ async def traiter_commandes(message):
 
 
     elif message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
-        await message.channel.purge()
+        await supprimer_message(message.channel)
     
     elif message.author != client.user: 
         await message.channel.send("Commande inconnue : tapez /help pour afficher la liste des commandes")
