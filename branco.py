@@ -102,10 +102,10 @@ async def traiter_commandes(message):
         await message.channel.send(embed=embed_help)
 
 
-    elif message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
+    elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/delete" and (message.author == "nicolasmarra" or message.author.guild_permissions.administrator):
         await supprimer_message(message.channel)
     
-    elif message.author != client.user: 
+    elif message.channel.id == PARIS_CHANNEL_ID and message.author != client.user: 
         await message.channel.send("Commande inconnue : tapez /help pour afficher la liste des commandes")
 
 
