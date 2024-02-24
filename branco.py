@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 import re
+import asyncio
 from paris import *
 from pronostics import afficher_pronostic
 
@@ -23,23 +24,31 @@ client = discord.Client(intents=intents)
 async def supprimer_message(channel):
     await channel.purge()
 
-async def envoyer_message(channel, message):
-    await channel.send(message)
+async def envoyer_message(channel, messages):
+    for message in messages:
+        if isinstance(message, discord.Embed):
+            await channel.send(embed=message)
+        else:
+            await channel.send(message)
+    await asyncio.sleep(2)
 
 async def envoyer_paris_du_jour(commande="/paris"):
     channel = client.get_channel(PARIS_CHANNEL_ID)
-    print(commande)
+    #print(commande)
     embed_paris = afficher_paris(commande)
-    print(embed_paris)
+    #print(embed_paris)
+    messages = []
     for embed_pari in embed_paris:
-        await channel.send(embed=embed_pari)
+        messages.append(embed_pari)
+    await envoyer_message(channel, messages)
 
 async def envoyer_pronostics():
     channel = client.get_channel(PARIS_CHANNEL_ID)
     embed_pronostics = afficher_pronostic()
+    messages = []
     for embed_pronostic in embed_pronostics:
-        await channel.send(embed=embed_pronostic)
-
+        messages.append(embed_pronostic)
+    await envoyer_message(channel, messages)
 
 async def traiter_commandes(message):
     commande = message.content
@@ -56,8 +65,10 @@ async def traiter_commandes(message):
                 await envoyer_message(message.channel, "Ce championnat n'existe pas")
             else:   
                 embed_paris = afficher_paris(commande_divisee[0], url)
+                messages = []
                 for embed_pari in embed_paris:
-                    await message.channel.send(embed=embed_pari)
+                    messages.append(embed_pari)
+                await envoyer_message(message.channel, messages)
 
         elif len(commande_divisee) >= 3 and commande_divisee[1] == "-e":
             equipe = commande[9:]
@@ -85,9 +96,10 @@ async def traiter_commandes(message):
     elif message.channel.id == PARIS_CHANNEL_ID and len(commande_divisee) == 2 and commande_divisee[0] == "/pronostic" and commande_divisee[1] == "2":
         
         embed_pronostics = afficher_pronostic(commande_divisee[1])
+        messages = []
         for embed_pronostic in embed_pronostics:
-                await message.channel.send(embed=embed_pronostic)
-    
+            messages.append(embed_pronostics)
+        await envoyer_message(message.channel, messages)
 
     elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/help":
         embed_help = discord.Embed(title="**Liste des commandes**", color=0xff0000)

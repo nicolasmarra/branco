@@ -25,7 +25,6 @@ def get_paris(commande, url):
     
     
     #print(len(paris_items))
-
     paris = []
 
     for pari_item in paris_items:
@@ -34,22 +33,28 @@ def get_paris(commande, url):
         evenement_lien = pari_item['href']
         pari_info["evenement_lien"] = evenement_lien
 
-
         equipes_infos = pari_item.find_all(class_="scoreboard_contestantLabel")
         if len(equipes_infos) >= 2:
             pari_info["equipe_domicile"] = equipes_infos[0].get_text(strip=True)
             pari_info["equipe_exterieur"] = equipes_infos[1].get_text(strip=True)
+
         else: 
             continue
 
+    
         
-        cotes_infos = pari_item.select(".oddValue.ng-star-inserted")
-        if len(cotes_infos) >= 3:
-            pari_info["cote_domicile"] = cotes_infos[0].get_text(strip=True)
-            pari_info["cote_match_nul"] = cotes_infos[1].get_text(strip=True)
-            pari_info["cote_exterieur"] = cotes_infos[2].get_text(strip=True)
+            
+        odds = pari_item.find(class_='market_odds')
+        cotes = odds.find_all(class_='btn_label')
+        
+        if len(cotes) >= 3:
+                pari_info["cote_domicile"] = cotes[0].get_text(strip=True)
+                pari_info["cote_match_nul"] = cotes[1].get_text(strip=True)
+                pari_info["cote_exterieur"] = cotes[2].get_text(strip=True)
         else:
-            continue
+                continue
+        
+
 
         evenement_infos = pari_item.find_all("span", class_="breadcrumb_itemLabel ng-star-inserted")
         type_evenement = " ".join(element.get_text(strip=True) for element in evenement_infos if element and element.get_text(strip=True))
@@ -57,8 +62,8 @@ def get_paris(commande, url):
 
         evenement_heure = pari_item.find("div", class_="event_infoTime ng-star-inserted")
         pari_info["evenement_heure"] = evenement_heure.get_text(strip=True)
-        
 
+            
         if commande == "/paris-live":
             score_equipe_domicile = pari_item.find("span", class_="scoreboard_score scoreboard_score-1 ng-star-inserted").get_text(strip=True)
             score_equipe_exterieur = pari_item.find("span", class_="scoreboard_score scoreboard_score-2 ng-star-inserted").get_text(strip=True)
@@ -80,8 +85,6 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
         cote_exterieur = pari_info.get("cote_exterieur")
         type_evenement = pari_info.get("type_evenement")
         evenement_heure = pari_info.get("evenement_heure")
-
-
 
         if commande == "/paris-live":
             score_equipe_domicile = pari_info.get("score_equipe_domicile")
