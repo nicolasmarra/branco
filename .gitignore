@@ -3,3 +3,5 @@
 
 # Fichiers de logs
 __pycache__
+.log 
+nohup.out
