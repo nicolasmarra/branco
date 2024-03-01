@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import json
 
 def get_url(competition):
-    with open("competition_url.json", "r") as fichier_json:
+    with open("assets/competition_url.json", "r") as fichier_json:
         competition_url = json.load(fichier_json)
 
 
@@ -94,11 +94,17 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
             f"Cotes: {equipe_domicile} : {cote_domicile} /  {equipe_exterieur} : {cote_exterieur} / Nul : {cote_match_nul}\n"
             )
         
-
-        embed_paris = discord.Embed(title=f"**{type_evenement} - {evenement_heure}**\n", color=0xff0000)
         
+        embed_paris = discord.Embed(title=f"**🏆{type_evenement}\n⏰{evenement_heure}**\n", color=0xff0000)
+        paris_info = (
+            f"🏠 **{equipe_domicile}** : {cote_domicile}\n"
+            f"🚌 **{equipe_exterieur}** : {cote_exterieur}\n"
+            f"Nul : {cote_match_nul}"
+        )
+
         if commande == "/paris":
-            embed_paris.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=message_paris)
+            embed_paris.add_field(name="---------------------------", value=f"```yaml\n{paris_info}\n```", inline=False)
+            #embed_paris.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=paris_info)
         elif commande == "/paris-live":
             embed_paris.add_field(name=f"**{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**", value=message_paris)
 
