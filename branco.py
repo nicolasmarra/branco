@@ -24,13 +24,16 @@ client = discord.Client(intents=intents)
 async def supprimer_message(channel):
     await channel.purge()
 
-async def envoyer_message(channel, messages):
+async def envoyer_messages(channel, messages):
     for message in messages:
         if isinstance(message, discord.Embed):
             await channel.send(embed=message)
         else:
             await channel.send(message)
     await asyncio.sleep(2)
+
+async def envoyer_message(channel, message):
+    await channel.send(message)
 
 async def envoyer_paris_du_jour(commande="/paris"):
     channel = client.get_channel(PARIS_CHANNEL_ID)
@@ -40,7 +43,7 @@ async def envoyer_paris_du_jour(commande="/paris"):
     messages = []
     for embed_pari in embed_paris:
         messages.append(embed_pari)
-    await envoyer_message(channel, messages)
+    await envoyer_messages(channel, messages)
 
 async def envoyer_pronostics():
     channel = client.get_channel(PARIS_CHANNEL_ID)
@@ -48,7 +51,7 @@ async def envoyer_pronostics():
     messages = []
     for embed_pronostic in embed_pronostics:
         messages.append(embed_pronostic)
-    await envoyer_message(channel, messages)
+    await envoyer_messages(channel, messages)
 
 async def traiter_commandes(message):
     commande = message.content
@@ -63,12 +66,13 @@ async def traiter_commandes(message):
             url = get_url(commande_divisee[2])
             if url is None:
                 await envoyer_message(message.channel, "Ce championnat n'existe pas")
+            
             else:   
                 embed_paris = afficher_paris(commande_divisee[0], url)
                 messages = []
                 for embed_pari in embed_paris:
                     messages.append(embed_pari)
-                await envoyer_message(message.channel, messages)
+                await envoyer_messages(message.channel, messages)
 
         elif len(commande_divisee) >= 3 and commande_divisee[1] == "-e":
             equipe = commande[9:]
@@ -99,7 +103,7 @@ async def traiter_commandes(message):
         messages = []
         for embed_pronostic in embed_pronostics:
             messages.append(embed_pronostics)
-        await envoyer_message(message.channel, messages)
+        await envoyer_messages(message.channel, messages)
 
     elif message.channel.id == PARIS_CHANNEL_ID and message.content == "/help":
         embed_help = discord.Embed(title="**Liste des commandes**", color=0xff0000)
