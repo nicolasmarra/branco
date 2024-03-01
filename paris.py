@@ -95,19 +95,20 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
             )
         
         
-        embed_paris = discord.Embed(title=f"**🏆{type_evenement}\n⏰{evenement_heure}**\n", color=0xff0000)
+
+        if commande == "/paris":
+            embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
+        elif commande == "/paris-live":
+            embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**\n", color=0xff0000)
         paris_info = (
-            f"🏠 **{equipe_domicile}** : {cote_domicile}\n"
-            f"🚌 **{equipe_exterieur}** : {cote_exterieur}\n"
+            
+            f"🏠{equipe_domicile} : {cote_domicile}\n"
+            f"🚌 {equipe_exterieur} : {cote_exterieur}\n"
             f"Nul : {cote_match_nul}"
         )
 
-        if commande == "/paris":
-            embed_paris.add_field(name="---------------------------", value=f"```yaml\n{paris_info}\n```", inline=False)
-            #embed_paris.add_field(name=f"**{equipe_domicile} vs {equipe_exterieur}**", value=paris_info)
-        elif commande == "/paris-live":
-            embed_paris.add_field(name=f"**{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**", value=message_paris)
-
+        embed_paris.add_field(name=f"**----------------------------------------------------------**", value=f"```yaml\n{paris_info}\n```")
+        
         embed_paris_list.append(embed_paris)
     
     return embed_paris_list
