@@ -41,18 +41,18 @@ def get_paris(commande, url):
         else: 
             continue
 
-    
-        
             
         odds = pari_item.find(class_='market_odds')
-        cotes = odds.find_all(class_='btn_label')
+
+        cotes = odds.find_all('span', class_=lambda x: x and x.startswith('btn_label ng-tns'))
         
         if len(cotes) >= 3:
                 pari_info["cote_domicile"] = cotes[0].get_text(strip=True)
                 pari_info["cote_match_nul"] = cotes[1].get_text(strip=True)
                 pari_info["cote_exterieur"] = cotes[2].get_text(strip=True)
+                
         else:
-                continue
+            continue
         
 
 
