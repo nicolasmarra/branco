@@ -11,6 +11,14 @@ def get_url(competition):
 
     return competition_url.get(competition, None)    
 
+def get_flag_evenement(evenement):
+    with open("assets/competition_flags.json", "r") as fichier_json:
+        competition_flags = json.load(fichier_json)
+
+    
+    competition = evenement.split("•")[0].strip()
+    return competition_flags.get(competition, "")
+
 def get_paris(commande, url):
     
     response = requests.get(url)
@@ -96,15 +104,16 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
         evenement_heure = pari_info.get("evenement_heure")
         pourcentage_domicile = pari_info.get("pourcentage_domicile")
         pourcentage_match_nul = pari_info.get("pourcentage_match_nul")
-        pourcentage_exterieur = pari_info.get("pourcentage_exterieur")
+        pourcentage_exterieur = pari_info.get("pourcentage_exterieur")        
 
         if commande == "/paris-live":
             score_equipe_domicile = pari_info.get("score_equipe_domicile")
             score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
         
+        flag_evenement = get_flag_evenement(type_evenement)
         paris_info = None
         if commande == "/paris":
-            embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
+            embed_paris = discord.Embed(title=f"**⚽{flag_evenement} {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
             paris_info = (
             
             f"🏠{equipe_domicile} : {cote_domicile} ({pourcentage_domicile}%)\n"
@@ -121,7 +130,7 @@ def afficher_paris(commande, url="https://www.betclic.fr/football-s1"):
             f"Nul : {cote_match_nul}\n"
             )
 
-        embed_paris.add_field(name=f"**----------------------------------------------------------**", value=f"```yaml\n{paris_info}\n```")
+        embed_paris.add_field(name=f"**-------------------------------------------------**", value=f"```yaml\n{paris_info}\n```")
         
         embed_paris_list.append(embed_paris)
     
@@ -148,15 +157,16 @@ def get_paris_equipe(equipe,commande, url="https://www.betclic.fr/football-s1"):
                 score_equipe_domicile = pari_info.get("score_equipe_domicile")
                 score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
 
+            flag_evenement = get_flag_evenement(type_evenement)
             paris_info = None
             if commande == "/paris":
-                embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
+                embed_paris = discord.Embed(title=f"**⚽{flag_evenement} {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
                 paris_info = (
-            
+                
                 f"🏠{equipe_domicile} : {cote_domicile} ({pourcentage_domicile}%)\n"
                 f"🚌 {equipe_exterieur} : {cote_exterieur} ({pourcentage_exterieur}%)\n"
                 f"Nul : {cote_match_nul} ({pourcentage_match_nul}%)\n"
-                )
+            )
 
             elif commande == "/paris-live":
                 embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**\n", color=0xff0000)
@@ -195,16 +205,17 @@ def afficher_paris_cote(cote, type, commande, url="https://www.betclic.fr/footba
             score_equipe_exterieur = pari_info.get("score_equipe_exterieur")
 
         
+            flag_evenement = get_flag_evenement(type_evenement)
             paris_info = None
             if commande == "/paris":
-                embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
+                embed_paris = discord.Embed(title=f"**⚽{flag_evenement} {type_evenement} - {evenement_heure}\n{equipe_domicile} vs {equipe_exterieur}**\n", color=0xff0000)
                 paris_info = (
                 
                 f"🏠{equipe_domicile} : {cote_domicile} ({pourcentage_domicile}%)\n"
                 f"🚌 {equipe_exterieur} : {cote_exterieur} ({pourcentage_exterieur}%)\n"
                 f"Nul : {cote_match_nul} ({pourcentage_match_nul}%)\n"
             )
-    
+
             elif commande == "/paris-live":
                 embed_paris = discord.Embed(title=f"**🏆 {type_evenement} - {evenement_heure}\n{equipe_domicile} {score_equipe_domicile} - {score_equipe_exterieur} {equipe_exterieur}**\n", color=0xff0000)
                 paris_info = (
